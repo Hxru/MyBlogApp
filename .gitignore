@@ -1,0 +1,44 @@
+# Environment variables
+.env
+
+# Log files
+*.log
+logs/
+
+# Database
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+
+# Cache
+cache/
+*.cache
+
+# Uploads (if you add file uploads later)
+uploads/
+
+# Composer
+vendor/
+composer.lock
+
+# Node.js
+node_modules/
+package-lock.json
