@@ -4,6 +4,29 @@ class Post {
     private $conn;
     private $table = 'blog_posts';
 
+    private function createPostsTable() {
+        try {
+            $query = "CREATE TABLE IF NOT EXISTS {$this->table} (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) NOT NULL,
+                `title` varchar(255) NOT NULL,
+                `content` text NOT NULL,
+                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+                PRIMARY KEY (`id`),
+                KEY `user_id` (`user_id`),
+                CONSTRAINT `{$this->table}_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+            
+            $this->conn->exec($query);
+            error_log("Blog posts table created successfully");
+            return true;
+        } catch (PDOException $e) {
+            error_log("Failed to create blog posts table: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function __construct() {
         $database = new Database();
         $this->conn = $database->getConnection();
@@ -11,8 +34,21 @@ class Post {
 
     public function create($userId, $title, $content) {
         try {
+            // Validate inputs
+            if (empty($userId)) {
+                error_log("Create post error: User ID is empty");
+                return ['success' => false, 'message' => 'User ID is required'];
+            }
             if (empty($title) || empty($content)) {
+                error_log("Create post error: Title or content is empty");
                 return ['success' => false, 'message' => 'Title and content are required'];
+            }
+
+            // Check if table exists
+            $tableCheck = $this->conn->query("SHOW TABLES LIKE '{$this->table}'");
+            if ($tableCheck->rowCount() === 0) {
+                // Create table if it doesn't exist
+                $this->createPostsTable();
             }
 
             $stmt = $this->conn->prepare(
@@ -28,6 +64,10 @@ class Post {
                 'data' => ['post_id' => $postId]
             ];
         } catch (PDOException $e) {
+            error_log("Database error in create post: " . $e->getMessage());
+            error_log("SQL State: " . $e->errorInfo[0]);
+            error_log("Error Code: " . $e->errorInfo[1]);
+            error_log("Error Message: " . $e->errorInfo[2]);
             error_log("Create post error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to create post'];
         }
@@ -36,7 +76,7 @@ class Post {
     public function getAllPosts($page = 1, $limit = 10) {
         try {
             $offset = ($page - 1) * $limit;
-            
+
             $stmt = $this->conn->prepare(
                 "SELECT p.*, u.username as author_name 
                  FROM {$this->table} p 
