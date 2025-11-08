@@ -29,20 +29,45 @@ MyBlogApp/
 
 ## Setup Instructions
 
+### Local Development Environment
+
 1. Database Setup:
    - Create a MySQL database named 'myblogapp_db'
-   - Import the SQL file from `backend/config/database.sql`
+   - Import the SQL file from `database_setup.sql`
 
 2. Configuration:
-   - Copy `.env.example` to `.env`
-   - Update database credentials in `.env`
+   - Copy `.env.development` to `.env`
+   - Update database credentials if needed
+   - Default configuration works with XAMPP
 
-3. Server Setup:
+3. Local Server Setup:
    - Place the project in your XAMPP's htdocs folder
    - Start Apache and MySQL services
+   - Ensure MySQL is running on port 3307 (or update port in .env)
 
-4. Access the Application:
+4. Access Local Development:
    - Open your browser and navigate to: http://localhost/MyBlogApp
+   - Default admin credentials in development environment
+
+### Production Environment (InfinityFree)
+
+1. Database Setup:
+   - Create database in InfinityFree control panel
+   - Import the database structure using phpMyAdmin
+   - Initial data will be created automatically
+
+2. Configuration:
+   - Copy `.env.production` to `.env` on the server
+   - Ensure database credentials match InfinityFree settings
+   - Update APP_URL to your InfinityFree domain
+
+3. File Upload:
+   - Use FTP (FileZilla) to upload files to InfinityFree
+   - Ensure proper file permissions (644 for files, 755 for directories)
+
+4. Access Production:
+   - Visit your InfinityFree domain (e.g., https://myblogapp-hxru.infinityfreeapp.com)
+   - Create admin account through registration
 
 ## Technologies Used
 
