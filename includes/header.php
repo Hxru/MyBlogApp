@@ -3,8 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Get the base URL
-$base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/MyBlogApp';
+// Get the base URL from environment or fallback
+$base_url = getenv('APP_URL') ?: 'https://' . $_SERVER['HTTP_HOST'];
+
+// Remove /MyBlogApp from the path if it exists
+$base_url = rtrim($base_url, '/');
+$base_url = str_replace('/MyBlogApp', '', $base_url);
 ?>
 <!DOCTYPE html>
 <html lang="en">
